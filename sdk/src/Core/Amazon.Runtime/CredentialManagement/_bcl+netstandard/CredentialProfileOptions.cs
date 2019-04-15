@@ -27,6 +27,7 @@ namespace Amazon.Runtime.CredentialManagement
     ///
     /// BasicAWSCredentials         AccessKey SecretKey
     /// SessionAWSCredentials       AccessKey SecretKey Token
+    /// ProcessAWSCredentials       ProcessCredentials
     /// AssmeRoleAWSCredentials     SourceProfile RoleArn [ExternalID] [MfaSerial]
     /// FederatedAWSCredentials     EndpointName RoleArn [UserIdentity]
     /// </summary>
@@ -40,6 +41,7 @@ namespace Amazon.Runtime.CredentialManagement
     ///
     /// BasicAWSCredentials         AccessKey SecretKey
     /// SessionAWSCredentials       AccessKey SecretKey Token
+    /// ProcessAWSCredentials       ProcessCredentials
     /// AssmeRoleAWSCredentials     SourceProfile RoleArn [ExternalID] [MfaSerial]
     /// </summary>
 #endif
@@ -87,6 +89,10 @@ namespace Amazon.Runtime.CredentialManagement
         /// The session token to be used to create AWSCredentials.
         /// </summary>
         public string Token { get; set; }
+        /// <summary>
+        /// The external process to be used to create AWSCredentials.
+        /// </summary>
+        public string CredentialProcess { get; set; }
 #if BCL
         /// <summary>
         /// The user identity to use when creating federated AWSCredentials.
@@ -113,7 +119,8 @@ namespace Amazon.Runtime.CredentialManagement
                     string.IsNullOrEmpty(RoleArn) &&
                     string.IsNullOrEmpty(SecretKey) &&
                     string.IsNullOrEmpty(SourceProfile) &&
-                    string.IsNullOrEmpty(Token);
+                    string.IsNullOrEmpty(Token) &&
+                    string.IsNullOrEmpty(CredentialProcess);
 ;
             }
         }
@@ -129,7 +136,8 @@ namespace Amazon.Runtime.CredentialManagement
                 "RoleArn=" + RoleArn + ", " +
                 "SecretKey=XXXXX, " +
                 "SourceProfile=" + SourceProfile + ", " +
-                "Token=" + Token +
+                "Token=" + Token + ", " +
+                "CredentialProcess=" + CredentialProcess +
 #if BCL
                 ", " + "UserIdentity=" + UserIdentity +
 #endif
@@ -147,21 +155,21 @@ namespace Amazon.Runtime.CredentialManagement
 
 #if BCL
             return AWSSDKUtils.AreEqual(
-                new object[] { AccessKey, EndpointName, ExternalID, MfaSerial, RoleArn, SecretKey, SourceProfile, Token, UserIdentity },
-                new object[] { po.AccessKey, po.EndpointName, po.ExternalID, po.MfaSerial, po.RoleArn, po.SecretKey, po.SourceProfile, po.Token, po.UserIdentity });
+                new object[] { AccessKey, EndpointName, ExternalID, MfaSerial, RoleArn, SecretKey, SourceProfile, Token, CredentialProcess, UserIdentity },
+                new object[] { po.AccessKey, po.EndpointName, po.ExternalID, po.MfaSerial, po.RoleArn, po.SecretKey, po.SourceProfile, po.Token, po.CredentialProcess, po.UserIdentity });
 #else
             return AWSSDKUtils.AreEqual(
-                new object[] { AccessKey, ExternalID, MfaSerial, RoleArn, SecretKey, SourceProfile, Token},
-                new object[] { po.AccessKey, po.ExternalID, po.MfaSerial, po.RoleArn, po.SecretKey, po.SourceProfile, po.Token });
+                new object[] { AccessKey, ExternalID, MfaSerial, RoleArn, SecretKey, SourceProfile, Token, CredentialProcess},
+                new object[] { po.AccessKey, po.ExternalID, po.MfaSerial, po.RoleArn, po.SecretKey, po.SourceProfile, po.Token, po.CredentialProcess });
 #endif
         }
 
         public override int GetHashCode()
         {
 #if BCL
-            return Hashing.Hash(AccessKey, EndpointName, ExternalID, MfaSerial, RoleArn, SecretKey, SourceProfile, Token, UserIdentity);
+            return Hashing.Hash(AccessKey, EndpointName, ExternalID, MfaSerial, RoleArn, SecretKey, SourceProfile, Token, CredentialProcess, UserIdentity);
 #else
-            return Hashing.Hash(AccessKey, ExternalID, MfaSerial, RoleArn, SecretKey, SourceProfile, Token);
+            return Hashing.Hash(AccessKey, ExternalID, MfaSerial, RoleArn, SecretKey, SourceProfile, Token, CredentialProcess);
 #endif
         }
     }
